@@ -9,8 +9,8 @@
   <body>
   	<h1>WebAudioRecorder.js demo</h1>
 
-  	<canvas id="canvas" width="512" height="256" ></canvas>
-  	
+  	<canvas id="canvas" width="512" height="256" ></canvas> 
+
   	<p><a href="https://github.com/higuma/web-audio-recorder-js" target="_blank">WebAudioRecorder.js</a> is a JavaScript library written in 2015 by ben and nick that can record audio and encode to common formats (pcm, Vorbis, mp3) directly in the browser.</p>
 	<p>Check out the <a href="https://github.com/addpipe/simple-web-audio-recorder-demo" target="_blank">code on GitHub</a> and our <a href="https://addpipe.com/blog/using-webaudiorecorder-js-to-record-audio-on-your-website/" target="_blank">blog post on using WebAudioRecorder.js to Record MP3, Vorbis and WAV Audio</a>.</p>
 	<p>Convert recorded audio to:<br>
@@ -30,6 +30,15 @@
 
 	<h3>Recordings</h3>
 	<ol id="recordingsList"></ol>
+
+	<style>
+            #canvas {
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+                background-color: black;
+            }
+    </style>
   
   	<!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
 	<script src="js/WebAudioRecorder.min.js"></script>
