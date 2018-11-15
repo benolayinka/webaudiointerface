@@ -190,7 +190,7 @@ function setupAudioNodes() {
     // Create the array for the data values
     amplitudeArray = new Uint8Array(analyserNode.frequencyBinCount);
     // Now connect the nodes together
-    input.connect(analyserNode); //ben
+    input.connect(analyserNode); //ben added source
     analyserNode.connect(javascriptNode);
     javascriptNode.connect(audioContext.destination);
 }
