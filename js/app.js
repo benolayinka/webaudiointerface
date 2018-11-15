@@ -196,7 +196,7 @@ function setupAudioNodes() {
     input.connect(audioContext.destination); //ben
     input.connect(analyserNode); //ben
     analyserNode.connect(javascriptNode);
-    javascriptNode.connect(audioContext.destination);
+    //javascriptNode.connect(audioContext.destination);
 }
 
 function drawTimeDomain() {
