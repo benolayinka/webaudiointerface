@@ -7,6 +7,27 @@ var input; 							//MediaStreamAudioSourceNode  we'll be recording
 var encodingType; 					//holds selected encoding for resulting audio (file)
 var encodeAfterRecord = true;       // when to encode
 
+var sourceNode;
+var analyserNode;
+var javascriptNode;
+var audioData = null;
+var audioPlaying = false;
+var sampleSize = 1024;  // number of samples to collect before analyzing data
+var amplitudeArray;     // array to hold time domain data
+var audioPlaying;
+var ctx;
+var canvasWidth  = 512;
+var canvasHeight = 256;
+
+window.requestAnimFrame = (function(){
+              return  window.requestAnimationFrame       ||
+                      window.webkitRequestAnimationFrame ||
+                      window.mozRequestAnimationFrame    ||
+                      function(callback, element){
+                        window.setTimeout(callback, 1000 / 60);
+                      };
+            })();
+
 // shim for AudioContext when it's not avb. 
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext; //new audio context to help us record
@@ -56,6 +77,19 @@ function startRecording() {
 		
 		//stop the input from playing back through the speakers
 		//input.connect(audioContext.destination)
+		audioPlaying = true;
+		setupAudioNodes();
+		ctx = document.getElementById("canvas").getContext("2d");
+        // setup the event handler that is triggered every time enough samples have been collected
+        // trigger the audio analysis and draw the results
+        javascriptNode.onaudioprocess = function () {
+            // get the Time Domain data for this sample
+            analyserNode.getByteTimeDomainData(amplitudeArray);
+            // draw the display if the audio is playing
+            if (audioPlaying == true) {
+                requestAnimFrame(drawTimeDomain);
+            }
+        }
 
 		//get the encoding 
 		encodingType = encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value;
@@ -113,6 +147,9 @@ function stopRecording() {
 	//stop microphone access
 	gumStream.getAudioTracks()[0].stop();
 
+	//ben
+	audioPlaying = false;
+
 	//disable the stop button
 	stopButton.disabled = true;
 	recordButton.disabled = false;
@@ -145,6 +182,34 @@ function createDownloadLink(blob,encoding) {
 
 	//add the li element to the ordered list
 	recordingsList.appendChild(li);
+}
+
+function setupAudioNodes() {
+    //sourceNode     = audioContext.createBufferSource();
+    analyserNode   = audioContext.createAnalyser();
+    javascriptNode = audioContext.createScriptProcessor(sampleSize, 1, 1);
+    // Create the array for the data values
+    amplitudeArray = new Uint8Array(analyserNode.frequencyBinCount);
+    // Now connect the nodes together
+    //sourceNode.connect(audioContext.destination);
+    //sourceNode.connect(analyserNode);
+    input.connect(audioContext.destination); //ben
+    input.connect(analyserNode); //ben
+    analyserNode.connect(javascriptNode);
+    javascriptNode.connect(audioContext.destination);
+}
+
+function drawTimeDomain() {
+    clearCanvas();
+    for (var i = 0; i < amplitudeArray.length; i++) {
+        var value = amplitudeArray[i] / 256;
+        var y = canvasHeight - (canvasHeight * value) - 1;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(i, y, 1, 1);
+    	}
+}
+function clearCanvas() {
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 }
 
 
