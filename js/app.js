@@ -185,18 +185,14 @@ function createDownloadLink(blob,encoding) {
 }
 
 function setupAudioNodes() {
-    //sourceNode     = audioContext.createBufferSource();
     analyserNode   = audioContext.createAnalyser();
     javascriptNode = audioContext.createScriptProcessor(sampleSize, 1, 1);
     // Create the array for the data values
     amplitudeArray = new Uint8Array(analyserNode.frequencyBinCount);
     // Now connect the nodes together
-    //sourceNode.connect(audioContext.destination);
-    //sourceNode.connect(analyserNode);
-    input.connect(audioContext.destination); //ben
     input.connect(analyserNode); //ben
     analyserNode.connect(javascriptNode);
-    //javascriptNode.connect(audioContext.destination);
+    javascriptNode.connect(audioContext.destination);
 }
 
 function drawTimeDomain() {
