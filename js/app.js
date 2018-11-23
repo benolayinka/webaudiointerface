@@ -221,6 +221,7 @@ function clearCanvas() {
 
 function drawdb() {
 	cleardb();
+	var sum;
 	for (var i = 0; i < amplitudeArray.length; i++) {
         // var value = amplitudeArray[i] / 256;
         var value = amplitudeArray[i];
