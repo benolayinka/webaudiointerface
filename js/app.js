@@ -141,8 +141,9 @@ function startRecording() {
 
 	}).catch(function(err) {
 	  	//enable the record button if getUSerMedia() fails
-    	recordButton.disabled = false;
-    	stopButton.disabled = true;
+	  	alert(err);
+    	//recordButton.disabled = false;
+    	//stopButton.disabled = true;
 
 	});
 
