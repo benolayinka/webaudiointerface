@@ -232,7 +232,7 @@ function drawdb() {
     var rms =  Math.sqrt(sum / amplitudeArray.length);
     var y = dbHeight - (dbHeight * rms) - 1;
     dbx.fillStyle = '#ffffff';
-    dbx.fillRect(0, 0, rms*WIDTH*1.4, HEIGHT);
+    dbx.fillRect(0, 0, rms*dbWidth*1.4, dbHeight);
     //dbx.fillRect(i, y, 1, 1);
 }
 function cleardb() {
