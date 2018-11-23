@@ -16,6 +16,10 @@ var sampleSize = 1024;  // number of samples to collect before analyzing data
 var amplitudeArray;     // array to hold time domain data
 var frequencyArray;     // array to hold freq domain data
 
+var db = -99; //hack
+var smoothing = 0.95;
+var smooth = 0;
+
 var audioPlaying;
 
 var canvasWidth  = 512;
@@ -92,7 +96,7 @@ function startRecording() {
         // trigger the audio analysis and draw the results
         javascriptNode.onaudioprocess = function () {
             // get the Time Domain data for this sample
-            analyserNode.getByteTimeDomainData(amplitudeArray);
+            analyserNode.getFloatTimeDomainData(amplitudeArray);
             analyserNode.getByteFrequencyData(frequencyArray);
             // draw the display if the audio is playing
             if (audioPlaying == true) {
@@ -199,7 +203,7 @@ function setupAudioNodes() {
     analyserNode   = audioContext.createAnalyser();
     javascriptNode = audioContext.createScriptProcessor(sampleSize, 1, 1);
     // Create the array for the data values
-    amplitudeArray = new Uint8Array(analyserNode.frequencyBinCount);
+    amplitudeArray = new Float32Array(analyserNode.frequencyBinCount);
     frequencyArray = new Uint8Array(analyserNode.frequencyBinCount);
     // Now connect the nodes together
     input.connect(analyserNode); //ben added source
@@ -210,7 +214,7 @@ function setupAudioNodes() {
 function drawTimeDomain() {
     clearCanvas();
     for (var i = 0; i < amplitudeArray.length; i++) {
-        var value = amplitudeArray[i] / 256;
+        var value = amplitudeArray[i]/2 + 0.5; //convert [-1 1] float to [0 to 1]
         var y = canvasHeight - (canvasHeight * value) - 1;
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(i, y, 1, 1);
@@ -222,19 +226,19 @@ function clearCanvas() {
 
 function drawdb() {
 	cleardb();
-	var sum;
+	var sum = 0;
+	var value = 0;
 	for (var i = 0; i < amplitudeArray.length; i++) {
-        // var value = amplitudeArray[i] / 256;
-        var value = amplitudeArray[i];
+        value = amplitudeArray[i];
         sum += value * value;
     	}
 
     // ... then take the square root of the sum.
     var rms =  Math.sqrt(sum / amplitudeArray.length);
-    var y = dbHeight - (dbHeight * rms) - 1;
+    smooth = Math.max(rms, smoothing*smooth);
+    db = Math.log10(smooth);
     dbx.fillStyle = '#ffffff';
-    dbx.fillRect(0, 0, rms*dbWidth*1.4, dbHeight);
-    //dbx.fillRect(i, y, 1, 1);
+    dbx.fillRect(0, 0, dbWidth+db*dbWidth, dbHeight);
 }
 function cleardb() {
     dbx.clearRect(0, 0, dbWidth, dbHeight);
