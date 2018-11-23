@@ -14,10 +14,15 @@ var audioData = null;
 var audioPlaying = false;
 var sampleSize = 1024;  // number of samples to collect before analyzing data
 var amplitudeArray;     // array to hold time domain data
+var frequencyArray;     // array to hold freq domain data
+
 var audioPlaying;
-var ctx;
+
 var canvasWidth  = 512;
 var canvasHeight = 256;
+
+var dbHeight = 50;
+var dbWidth = 500;
 
 window.requestAnimFrame = (function(){
               return  window.requestAnimationFrame       ||
@@ -31,6 +36,9 @@ window.requestAnimFrame = (function(){
 // shim for AudioContext when it's not avb. 
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext; //new audio context to help us record
+
+var ctx = document.getElementById("canvas").getContext("2d");
+var dbx = document.getElementById("db").getContext("2d");
 
 var encodingTypeSelect = document.getElementById("encodingTypeSelect");
 var recordButton = document.getElementById("recordButton");
@@ -79,15 +87,17 @@ function startRecording() {
 		//input.connect(audioContext.destination)
 		audioPlaying = true;
 		setupAudioNodes();
-		ctx = document.getElementById("canvas").getContext("2d");
+		
         // setup the event handler that is triggered every time enough samples have been collected
         // trigger the audio analysis and draw the results
         javascriptNode.onaudioprocess = function () {
             // get the Time Domain data for this sample
-            analyserNode.getByteFrequencyData(amplitudeArray);
+            analyserNode.getTimeFrequencyData(amplitudeArray);
+            analyserNode.getByteFrequencyData(frequencyArray);
             // draw the display if the audio is playing
             if (audioPlaying == true) {
                 requestAnimFrame(drawTimeDomain);
+                requestAnimFrame(drawdb);
             }
         }
 
@@ -189,6 +199,7 @@ function setupAudioNodes() {
     javascriptNode = audioContext.createScriptProcessor(sampleSize, 1, 1);
     // Create the array for the data values
     amplitudeArray = new Uint8Array(analyserNode.frequencyBinCount);
+    frequencyArray = new Uint8Array(analyserNode.frequencyBinCount);
     // Now connect the nodes together
     input.connect(analyserNode); //ben added source
     analyserNode.connect(javascriptNode);
@@ -208,7 +219,24 @@ function clearCanvas() {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 }
 
+function drawdb() {
+	cleardb();
+	for (var i = 0; i < amplitudeArray.length; i++) {
+        // var value = amplitudeArray[i] / 256;
+        var value = amplitudeArray[i];
+        sum += value * value;
+    	}
 
+    // ... then take the square root of the sum.
+    var rms =  Math.sqrt(sum / amplitudeArray.length);
+    var y = dbHeight - (dbHeight * rms) - 1;
+    dbx.fillStyle = '#ffffff';
+    dbx.fillRect(0, 0, rms*WIDTH*1.4, HEIGHT);
+    //dbx.fillRect(i, y, 1, 1);
+}
+function cleardb() {
+    dbx.clearRect(0, 0, dbWidth, dbHeight);
+}
 
 //helper function
 function __log(e, data) {

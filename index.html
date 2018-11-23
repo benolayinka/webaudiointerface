@@ -7,12 +7,16 @@
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
+  	<br>
   	<h1>WDT2410 Recorder and Spectrum Analyzer</h1>
 
-  	<canvas id="canvas" width="512" height="256" ></canvas> 
+  	<canvas id="canvas" width="512" height="256" ></canvas>
+
+  	<br>
+  	<canvas id="db" width="500" height="50" ></canvas>
 
   	<p>This is our DT2410 project to record audio, analyze the spectrum, and play it back. It uses HTML5 Web Audio javascript libraries and <a href="https://github.com/higuma/web-audio-recorder-js" target="_blank">WebAudioRecorder.js</a>to record audio and encode to common formats (pcm, Vorbis, mp3) directly in the browser.</p>
-  	
+
 	<p>Convert recorded audio to:<br>
 	<select id="encodingTypeSelect">
 	  <option value="wav">Waveform Audio (.wav)</option>
