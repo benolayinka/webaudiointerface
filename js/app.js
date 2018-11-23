@@ -92,7 +92,7 @@ function startRecording() {
         // trigger the audio analysis and draw the results
         javascriptNode.onaudioprocess = function () {
             // get the Time Domain data for this sample
-            analyserNode.getTimeFrequencyData(amplitudeArray);
+            analyserNode.getByteTimeDomainData(amplitudeArray);
             analyserNode.getByteFrequencyData(frequencyArray);
             // draw the display if the audio is playing
             if (audioPlaying == true) {
