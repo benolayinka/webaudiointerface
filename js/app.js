@@ -42,7 +42,9 @@ var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext; //new audio context to help us record
 
 var ctx = document.getElementById("canvas").getContext("2d");
+var ctx2 = document.getElementById("canvas2").getContext("2d");
 var dbx = document.getElementById("db").getContext("2d");
+var dbx2 = document.getElementById("db2").getContext("2d");
 
 var encodingTypeSelect = document.getElementById("encodingTypeSelect");
 var recordButton = document.getElementById("recordButton");
@@ -213,19 +215,27 @@ function setupAudioNodes() {
 
 function drawTimeDomain() {
     clearCanvas();
+    clearCanvas2();
+
     for (var i = 0; i < amplitudeArray.length; i++) {
         var value = amplitudeArray[i]/2 + 0.5; //convert [-1 1] float to [0 to 1]
         var y = canvasHeight - (canvasHeight * value) - 1;
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(i, y, 1, 1);
+        ctx2.fillStyle = '#ffffff';
+        ctx2.fillRect(i, y, 1, 1);
     	}
 }
 function clearCanvas() {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 }
+function clearCanvas2() {
+    ctx2.clearRect(0, 0, canvasWidth, canvasHeight);
+}
 
 function drawdb() {
 	cleardb();
+	cleardb2();
 	var sum = 0;
 	var value = 0;
 	for (var i = 0; i < amplitudeArray.length; i++) {
@@ -239,11 +249,15 @@ function drawdb() {
     db = Math.log10(smooth);
     dbx.fillStyle = '#ffffff';
     dbx.fillRect(0, 0, dbWidth+db*dbWidth, dbHeight);
+    dbx2.fillStyle = '#ffffff';
+    dbx2.fillRect(0, 0, dbWidth+db*dbWidth, dbHeight);
 }
 function cleardb() {
     dbx.clearRect(0, 0, dbWidth, dbHeight);
 }
-
+function cleardb2() {
+    dbx2.clearRect(0, 0, dbWidth, dbHeight);
+}
 //helper function
 function __log(e, data) {
 	log.innerHTML += "\n" + e + " " + (data || '');

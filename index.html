@@ -9,14 +9,33 @@
   <body>
   	<br>
   	<h1>WDT2410 Recorder and Spectrum Analyzer</h1>
-    <br>
-    <select id="input">
-      <option value="default">default (.wav)</option>
-    </select>
-  	<canvas id="canvas" width="512" height="256" ></canvas>
+   
+  	
+    <table> 
+      <tr>
 
-  	<br>
-  	<canvas id="db" width="500" height="50" ></canvas>
+      </tr>
+      <tr> 
+        <th>Input 1         
+          <select id="inputdevice1">
+          <option value="default">default (.wav)</option>
+          </select></th> 
+        <th>Input 2<select id="inputdevice2">
+          <option value="default">default (.wav)</option>
+          </select></th> 
+      </tr> 
+      <tr> 
+        <td><canvas id="canvas" width="512" height="256" ></canvas></td> 
+        <td><canvas id="canvas2" width="512" height="256" ></canvas></td> 
+      </tr>
+      <tr>
+        <td><canvas id="db" width="500" height="50" ></canvas></td>
+        <td><canvas id="db2" width="500" height="50" ></canvas></td>
+
+
+      </tr>
+    <table>
+
 
   	<p>This is our DT2410 project to record audio, analyze the spectrum, and play it back. It uses HTML5 Web Audio javascript libraries and <a href="https://github.com/higuma/web-audio-recorder-js" target="_blank">WebAudioRecorder.js</a>to record audio and encode to common formats (pcm, Vorbis, mp3) directly in the browser.</p>
 
@@ -45,7 +64,19 @@
                 display: block;
                 background-color: black;
             }
+            #canvas2 {
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+                background-color: black;
+            }
             #db {
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+                background-color: black;
+            }
+            #db2 {
                 margin-left: auto;
                 margin-right: auto;
                 display: block;
