@@ -17,12 +17,13 @@
       </tr>
       <tr> 
         <th>Input 1         
-          <select id="inputdevice1">
-          <option value="default">default (.wav)</option>
-          </select></th> 
-        <th>Input 2<select id="inputdevice2">
-          <option value="default">default (.wav)</option>
-          </select></th> 
+        <div class="select">
+        <label for="audioSource">Audio input source: </label><select id="audioSource1"></select>
+    	</div></th> 
+        <th>Input 2
+       	<div class="select">
+        <label for="audioSource">Audio input source: </label><select id="audioSource2"></select>
+    	</div></th> 
       </tr> 
       <tr> 
         <td><canvas id="canvas" width="512" height="256" ></canvas></td> 
@@ -37,7 +38,7 @@
     <table>
 
 
-  	<p>This is our DT2410 project to record audio, analyze the spectrum, and play it back. It uses HTML5 Web Audio javascript libraries and <a href="https://github.com/higuma/web-audio-recorder-js" target="_blank">WebAudioRecorder.js</a>to record audio and encode to common formats (pcm, Vorbis, mp3) directly in the browser.</p>
+  	<p>This is our DT2410 project to record audio, analyze the spectrum, and play it back. It uses HTML5 Web Audio javascript libraries and <a href="https://github.com/higuma/web-audio-recorder-js" target="_blank">WebAudioRecorder.js</a> to record audio and encode to common formats (pcm, Vorbis, mp3) directly in the browser.</p>
 
 	<p>Convert recorded audio to:<br>
 	<select id="encodingTypeSelect">
