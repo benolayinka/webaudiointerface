@@ -54,6 +54,40 @@ var stopButton = document.getElementById("stopButton");
 recordButton.addEventListener("click", startRecording);
 stopButton.addEventListener("click", stopRecording);
 
+const audioInputSelect1 = document.querySelector('select#audioSource1');
+var audioInputSelect2 = document.querySelector('select#audioSource2');
+const selectors = [audioInputSelect1,audioInputSelect2];
+
+function gotDevices(deviceInfos) {
+  // Handles being called several times to update labels. Preserve values.
+  const values = selectors.map(select => select.value);
+  selectors.forEach(select => {
+    while (select.firstChild) {
+      select.removeChild(select.firstChild);
+    }
+  });
+  for(item in selectors){
+	  for (let i = 0; i !== deviceInfos.length; ++i) {
+	    const deviceInfo = deviceInfos[i];
+	    const option = document.createElement('option');
+	    option.value = deviceInfo.deviceId;
+	    if (deviceInfo.kind === 'audioinput') {
+	      option.text = deviceInfo.label || `microphone ${selectors[item].length + 1}`;
+	      selectors[item].appendChild(option);
+	    } else {
+	      console.log('Some other kind of source/device: ', deviceInfo);
+	    }
+	}
+  }
+  selectors.forEach((select, selectorIndex) => {
+    if (Array.prototype.slice.call(select.childNodes).some(n => n.value === values[selectorIndex])) {
+      select.value = values[selectorIndex];
+    }
+  });
+}
+
+navigator.mediaDevices.enumerateDevices().then(gotDevices);
+
 function startRecording() {
 	console.log("startRecording() called");
 
