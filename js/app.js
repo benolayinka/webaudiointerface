@@ -55,7 +55,7 @@ recordButton.addEventListener("click", startRecording);
 stopButton.addEventListener("click", stopRecording);
 
 const audioInputSelect1 = document.querySelector('select#audioSource1');
-var audioInputSelect2 = document.querySelector('select#audioSource2');
+const audioInputSelect2 = document.querySelector('select#audioSource2');
 const selectors = [audioInputSelect1,audioInputSelect2];
 
 function gotDevices(deviceInfos) {
