@@ -16,6 +16,14 @@ var sampleSize = 1024;  // number of samples to collect before analyzing data
 var amplitudeArray;     // array to hold time domain data
 var frequencyArray;     // array to hold freq domain data
 
+var low; //EQ for realtime midi control of recording
+var mid;
+var high;
+var filter;
+
+var inputs;
+var outputs; //midi
+
 var db = -99; //hack
 var smoothing = 0.95;
 var smooth = 0;
@@ -69,6 +77,27 @@ window.onload = function() {
 	*/
 	navigator.mediaDevices.enumerateDevices().then(gotDevices);
 
+	navigator.requestMIDIAccess()
+    .then(onMIDISuccess, onMIDIFailure);
+
+	function onMIDISuccess(midiAccess) {
+	    console.log(midiAccess);
+
+	    inputs = midiAccess.inputs;
+	    outputs = midiAccess.outputs;
+
+	    for (var input of midiAccess.inputs.values())
+        input.onmidimessage = getMIDIMessage;
+	}
+
+	function getMIDIMessage(midiMessage) {
+    	console.log(midiMessage);
+	}
+
+	function onMIDIFailure() {
+	    console.log('Could not access your MIDI devices.');
+	}
+
 };
 
 function gotDevices(deviceInfos) {
@@ -106,13 +135,12 @@ function start() {
     });
   }
   const audioSource1 = audioInputSelect1.value;
-  const audioSource2 = audioInputSelect2.value;
-  const constraints = {
+  const constraints1 = {
     audio: {deviceId: audioSource1 ? {exact: audioSource1} : undefined},
     video: false
   };
-  navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
-		__log("getUserMedia() success, stream created, initializing WebAudioRecorder...");
+  navigator.mediaDevices.getUserMedia(constraints1).then(function(stream) {
+		__log("getUserMedia() success, stream created from source 1");
 
 		/*
 			create an audio context after getUserMedia is called
@@ -153,6 +181,15 @@ function start() {
     	//stopButton.disabled = true;
 
 	});
+
+	const audioSource2 = audioInputSelect2.value;
+  	const constraints2 = {
+    audio: {deviceId: audioSource2 ? {exact: audioSource2} : undefined},
+    video: false
+  		};
+
+ 	//reinier this is where you need to add some code :)
+
 	navigator.mediaDevices.enumerateDevices().then(gotDevices);
 }
 
@@ -249,13 +286,37 @@ function createDownloadLink(blob,encoding) {
 }
 
 function setupAudioNodes() {
+	low = audioContext.createBiquadFilter();
+	low.type = "lowshelf";
+	low.frequency.value = 320.0;
+	low.gain.value = 0.0;
+
+	mid = audioContext.createBiquadFilter();
+	mid.type = "peaking";
+	mid.frequency.value = 1000.0;
+	mid.Q.value = 0.5;
+	mid.gain.value = 0.0;
+
+	high = audioContext.createBiquadFilter();
+	high.type = "highshelf";
+	high.frequency.value = 3200.0;
+	high.gain.value = 0.0;
+
+	filter = audioContext.createBiquadFilter();
+	filter.frequency.value = 20000.0;
+	filter.type = this.filter.LOWPASS;
+
     analyserNode   = audioContext.createAnalyser();
     javascriptNode = audioContext.createScriptProcessor(sampleSize, 1, 1);
     // Create the array for the data values
     amplitudeArray = new Float32Array(analyserNode.frequencyBinCount);
     frequencyArray = new Uint8Array(analyserNode.frequencyBinCount);
     // Now connect the nodes together
-    input.connect(analyserNode); //ben added source
+    input.connect(low); //ben added source
+    low.connect(mid);
+    mid.connect(high);
+    high.connect(filter);
+    filter.connect(analyserNode);
     analyserNode.connect(javascriptNode);
     javascriptNode.connect(audioContext.destination);
 }
