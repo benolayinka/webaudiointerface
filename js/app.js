@@ -146,13 +146,14 @@ function start() {
 	        }
 	    }
 
-	    }).then(gotDevices).catch(function(err) {
+	    }).catch(function(err) {
 	  	//enable the record button if getUSerMedia() fails
 	  	alert(err);
     	//recordButton.disabled = false;
     	//stopButton.disabled = true;
 
 	});
+	navigator.mediaDevices.enumerateDevices().then(gotDevices);
 }
 
 function startRecording() {
