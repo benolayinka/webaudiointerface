@@ -58,6 +58,19 @@ const audioInputSelect1 = document.querySelector('select#audioSource1');
 const audioInputSelect2 = document.querySelector('select#audioSource2');
 const selectors = [audioInputSelect1,audioInputSelect2];
 
+audioInputSelect1.onchange = start;
+audioInputSelect2.onchange = start;
+
+window.onload = function() {
+
+    /*
+    	We're using the standard promise based getUserMedia() 
+    	https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
+	*/
+	navigator.mediaDevices.enumerateDevices().then(gotDevices);
+
+};
+
 function gotDevices(deviceInfos) {
   // Handles being called several times to update labels. Preserve values.
   const values = selectors.map(select => select.value);
@@ -86,24 +99,19 @@ function gotDevices(deviceInfos) {
   });
 }
 
-navigator.mediaDevices.enumerateDevices().then(gotDevices);
-
-function startRecording() {
-	console.log("startRecording() called");
-
-	/*
-		Simple constraints object, for more advanced features see
-		https://addpipe.com/blog/audio-constraints-getusermedia/
-	*/
-    
-    var constraints = { audio: true, video:false }
-
-    /*
-    	We're using the standard promise based getUserMedia() 
-    	https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
-	*/
-
-	navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+function start() {
+  if (window.stream) {
+    window.stream.getTracks().forEach(track => {
+      track.stop();
+    });
+  }
+  const audioSource1 = audioInputSelect1.value;
+  const audioSource2 = audioInputSelect2.value;
+  const constraints = {
+    audio: {deviceId: audioSource1 ? {exact: audioSource1} : undefined},
+    video: false
+  };
+  navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
 		__log("getUserMedia() success, stream created, initializing WebAudioRecorder...");
 
 		/*
@@ -113,9 +121,6 @@ function startRecording() {
 
 		*/
 		audioContext = new AudioContext();
-
-		//update the format 
-		document.getElementById("formats").innerHTML="Format: 2 channel "+encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value+" @ "+audioContext.sampleRate/1000+"kHz"
 
 		//assign to gumStream for later use
 		gumStream = stream;
@@ -128,18 +133,33 @@ function startRecording() {
 		audioPlaying = true;
 		setupAudioNodes();
 		
-        // setup the event handler that is triggered every time enough samples have been collected
-        // trigger the audio analysis and draw the results
-        javascriptNode.onaudioprocess = function () {
-            // get the Time Domain data for this sample
-            analyserNode.getFloatTimeDomainData(amplitudeArray);
-            analyserNode.getByteFrequencyData(frequencyArray);
-            // draw the display if the audio is playing
-            if (audioPlaying == true) {
-                requestAnimFrame(drawTimeDomain);
-                requestAnimFrame(drawdb);
-            }
-        }
+	    // setup the event handler that is triggered every time enough samples have been collected
+	    // trigger the audio analysis and draw the results
+	    javascriptNode.onaudioprocess = function () {
+	        // get the Time Domain data for this sample
+	        analyserNode.getFloatTimeDomainData(amplitudeArray);
+	        analyserNode.getByteFrequencyData(frequencyArray);
+	        // draw the display if the audio is playing
+	        if (audioPlaying == true) {
+	            requestAnimFrame(drawTimeDomain);
+	            requestAnimFrame(drawdb);
+	        }
+	    }
+
+	    }).then(gotDevices).catch(function(err) {
+	  	//enable the record button if getUSerMedia() fails
+	  	alert(err);
+    	//recordButton.disabled = false;
+    	//stopButton.disabled = true;
+
+	});
+}
+
+function startRecording() {
+	console.log("startRecording() called");
+
+		//update the format 
+		document.getElementById("formats").innerHTML="Format: 2 channel "+encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value+" @ "+audioContext.sampleRate/1000+"kHz"
 
 		//get the encoding 
 		encodingType = encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value;
@@ -178,14 +198,6 @@ function startRecording() {
 		recorder.startRecording();
 
 		 __log("Recording started");
-
-	}).catch(function(err) {
-	  	//enable the record button if getUSerMedia() fails
-	  	alert(err);
-    	//recordButton.disabled = false;
-    	//stopButton.disabled = true;
-
-	});
 
 	//disable the record button
     recordButton.disabled = true;
