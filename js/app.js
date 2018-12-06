@@ -139,7 +139,7 @@ function start() {
     audio: {deviceId: audioSource1 ? {exact: audioSource1} : undefined},
     video: false
   };
-  navigator.mediaDevices.getUserMedia(constraints1).then(function(stream) {
+  navigator.mediaDevices.getUserMedia(constraints1).then(function(stream1) {
 		__log("getUserMedia() success, stream created from source 1");
 
 		/*
@@ -151,10 +151,10 @@ function start() {
 		audioContext = new AudioContext();
 
 		//assign to gumStream for later use
-		gumStream = stream;
+		gumStream1 = stream1;
 		
 		/* use the stream */
-		input = audioContext.createMediaStreamSource(stream);
+		input1 = audioContext.createMediaStreamSource(stream1);
 		
 		//stop the input from playing back through the speakers
 		//input.connect(audioContext.destination)
@@ -190,7 +190,47 @@ function start() {
 
  	//reinier this is where you need to add some code :)
 
-	navigator.mediaDevices.enumerateDevices().then(gotDevices);
+  	navigator.mediaDevices.getUserMedia(constraints2).then(function(stream2) {
+		__log("getUserMedia() success, stream created from source 2");
+
+		/*
+			create an audio context after getUserMedia is called
+			sampleRate might change after getUserMedia is called, like it does on macOS when recording through AirPods
+			the sampleRate defaults to the one set in your OS for your playback device
+
+		*/
+		audioContext = new AudioContext();
+
+		//assign to gumStream for later use
+		gumStream2 = stream2;
+		
+		/* use the stream */
+		input2 = audioContext.createMediaStreamSource(stream2);
+		
+		//stop the input from playing back through the speakers
+		//input.connect(audioContext.destination)
+		audioPlaying = true;
+		setupAudioNodes();
+		
+	    // setup the event handler that is triggered every time enough samples have been collected
+	    // trigger the audio analysis and draw the results
+	    javascriptNode.onaudioprocess = function () {
+	        // get the Time Domain data for this sample
+	        analyserNode.getFloatTimeDomainData(amplitudeArray);
+	        analyserNode.getByteFrequencyData(frequencyArray);
+	        // draw the display if the audio is playing
+	        if (audioPlaying == true) {
+	            requestAnimFrame(drawTimeDomain);
+	            requestAnimFrame(drawdb);
+	        }
+	    }
+
+	    }).catch(function(err) {
+	  	//enable the record button if getUSerMedia() fails
+	  	alert(err);
+    	//recordButton.disabled = false;
+    	//stopButton.disabled = true;
+    }
 }
 
 function startRecording() {
@@ -205,27 +245,55 @@ function startRecording() {
 		//disable the encoding selector
 		encodingTypeSelect.disabled = true;
 
-		recorder = new WebAudioRecorder(input, {
+		recorder1 = new WebAudioRecorder(input1, {
 		  workerDir: "js/", // must end with slash
 		  encoding: encodingType,
 		  numChannels:2, //2 is the default, mp3 encoding supports only 2
-		  onEncoderLoading: function(recorder, encoding) {
+		  onEncoderLoading: function(recorder1, encoding) {
 		    // show "loading encoder..." display
 		    __log("Loading "+encoding+" encoder...");
 		  },
-		  onEncoderLoaded: function(recorder, encoding) {
+		  onEncoderLoaded: function(recorder1, encoding) {
 		    // hide "loading encoder..." display
 		    __log(encoding+" encoder loaded");
 		  }
 		});
 
-		recorder.onComplete = function(recorder, blob) { 
+		recorder1.onComplete = function(recorder1, blob) { 
 			__log("Encoding complete");
-			createDownloadLink(blob,recorder.encoding);
+			createDownloadLink(blob,recorder1.encoding);
 			encodingTypeSelect.disabled = false;
 		}
 
-		recorder.setOptions({
+		recorder1.setOptions({
+		  timeLimit:120,
+		  encodeAfterRecord:encodeAfterRecord,
+	      ogg: {quality: 0.5},
+	      mp3: {bitRate: 160}
+	    });
+
+		//Duplicate code for second input channel recording
+		recorder2 = new WebAudioRecorder(input2, {
+		  workerDir: "js/", // must end with slash
+		  encoding: encodingType,
+		  numChannels:2, //2 is the default, mp3 encoding supports only 2
+		  onEncoderLoading: function(recorder2, encoding) {
+		    // show "loading encoder..." display
+		    __log("Loading "+encoding+" encoder...");
+		  },
+		  onEncoderLoaded: function(recorder2, encoding) {
+		    // hide "loading encoder..." display
+		    __log(encoding+" encoder loaded");
+		  }
+		});
+
+		recorder2.onComplete = function(recorder2, blob) { 
+			__log("Encoding complete");
+			createDownloadLink(blob,recorder2.encoding);
+			encodingTypeSelect.disabled = false;
+		}
+
+		recorder2.setOptions({
 		  timeLimit:120,
 		  encodeAfterRecord:encodeAfterRecord,
 	      ogg: {quality: 0.5},
@@ -233,7 +301,8 @@ function startRecording() {
 	    });
 
 		//start the recording process
-		recorder.startRecording();
+		recorder1.startRecording();
+		recorder2.startRecording();
 
 		 __log("Recording started");
 
