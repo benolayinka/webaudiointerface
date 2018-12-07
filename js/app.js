@@ -139,7 +139,7 @@ function start() {
     audio: {deviceId: audioSource1 ? {exact: audioSource1} : undefined},
     video: false
   };
-  navigator.mediaDevices.getUserMedia(constraints1).then(function(stream1) {
+  navigator.mediaDevices.getUserMedia(constraints1).then(function(stream) {
 		__log("getUserMedia() success, stream created from source 1");
 
 		/*
@@ -151,13 +151,13 @@ function start() {
 		audioContext = new AudioContext();
 
 		//assign to gumStream for later use
-		gumStream1 = stream1;
+		gumStream = stream;
 		
 		/* use the stream */
-		input1 = audioContext.createMediaStreamSource(stream1);
+		input = audioContext.createMediaStreamSource(stream);
 		
 		//stop the input from playing back through the speakers
-		//input.connect(audioContext.destination)
+		input.connect(audioContext.destination)
 		audioPlaying = true;
 		setupAudioNodes();
 		
@@ -208,7 +208,7 @@ function start() {
 		input2 = audioContext.createMediaStreamSource(stream2);
 		
 		//stop the input from playing back through the speakers
-		//input.connect(audioContext.destination)
+		input2.connect(audioContext.destination)
 		audioPlaying = true;
 		setupAudioNodes();
 		
@@ -237,7 +237,7 @@ function startRecording() {
 	console.log("startRecording() called");
 
 		//update the format 
-		document.getElementById("formats").innerHTML="Format: 2 channel "+encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value+" @ "+audioContext.sampleRate/1000+"kHz"
+		document.getElementById("formats").innerHTML="Format: 2 channel "+encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value+" @ 44.1 kHz"
 
 		//get the encoding 
 		encodingType = encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value;
@@ -245,55 +245,27 @@ function startRecording() {
 		//disable the encoding selector
 		encodingTypeSelect.disabled = true;
 
-		recorder1 = new WebAudioRecorder(input1, {
+		recorder = new WebAudioRecorder(input, {
 		  workerDir: "js/", // must end with slash
 		  encoding: encodingType,
 		  numChannels:2, //2 is the default, mp3 encoding supports only 2
-		  onEncoderLoading: function(recorder1, encoding) {
+		  onEncoderLoading: function(recorder, encoding) {
 		    // show "loading encoder..." display
 		    __log("Loading "+encoding+" encoder...");
 		  },
-		  onEncoderLoaded: function(recorder1, encoding) {
+		  onEncoderLoaded: function(recorder, encoding) {
 		    // hide "loading encoder..." display
 		    __log(encoding+" encoder loaded");
 		  }
 		});
 
-		recorder1.onComplete = function(recorder1, blob) { 
+		recorder.onComplete = function(recorder, blob) { 
 			__log("Encoding complete");
-			createDownloadLink(blob,recorder1.encoding);
+			createDownloadLink(blob,recorder.encoding);
 			encodingTypeSelect.disabled = false;
 		}
 
-		recorder1.setOptions({
-		  timeLimit:120,
-		  encodeAfterRecord:encodeAfterRecord,
-	      ogg: {quality: 0.5},
-	      mp3: {bitRate: 160}
-	    });
-
-		//Duplicate code for second input channel recording
-		recorder2 = new WebAudioRecorder(input2, {
-		  workerDir: "js/", // must end with slash
-		  encoding: encodingType,
-		  numChannels:2, //2 is the default, mp3 encoding supports only 2
-		  onEncoderLoading: function(recorder2, encoding) {
-		    // show "loading encoder..." display
-		    __log("Loading "+encoding+" encoder...");
-		  },
-		  onEncoderLoaded: function(recorder2, encoding) {
-		    // hide "loading encoder..." display
-		    __log(encoding+" encoder loaded");
-		  }
-		});
-
-		recorder2.onComplete = function(recorder2, blob) { 
-			__log("Encoding complete");
-			createDownloadLink(blob,recorder2.encoding);
-			encodingTypeSelect.disabled = false;
-		}
-
-		recorder2.setOptions({
+		recorder.setOptions({
 		  timeLimit:120,
 		  encodeAfterRecord:encodeAfterRecord,
 	      ogg: {quality: 0.5},
@@ -301,8 +273,7 @@ function startRecording() {
 	    });
 
 		//start the recording process
-		recorder1.startRecording();
-		recorder2.startRecording();
+		recorder.startRecording();
 
 		 __log("Recording started");
 
@@ -354,6 +325,7 @@ function createDownloadLink(blob,encoding) {
 	recordingsList.appendChild(li);
 }
 
+/*
 function setupAudioNodes() {
 	low = audioContext.createBiquadFilter();
 	low.type = "lowshelf";
@@ -389,6 +361,7 @@ function setupAudioNodes() {
     analyserNode.connect(javascriptNode);
     javascriptNode.connect(audioContext.destination);
 }
+*/
 
 function drawTimeDomain() {
     clearCanvas();
