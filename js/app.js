@@ -230,7 +230,7 @@ function start() {
 	  	alert(err);
     	//recordButton.disabled = false;
     	//stopButton.disabled = true;
-    }
+    })
 }
 
 function startRecording() {
