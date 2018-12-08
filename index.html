@@ -5,9 +5,11 @@
     <title>DT2410 Recorder and Spectrum Analyzer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="js/jquery.js"></script>
   </head>
   <body>
   	<br>
+  	<script src="js/jquery.knob.js"></script>
   	<h1>WDT2410 Recorder and Spectrum Analyzer</h1>
    
   	
@@ -36,8 +38,31 @@
 
       </tr>
     <table>
+    <div>
+	    <input type="text" value="75" class="dial">
 
+	    <script>
+	    	$(function() {
+	        	$(".dial").knob();
+	   		});
+		</script>
 
+		<input type="text" value="75" class="dial">
+
+	    <script>
+	    	$(function() {
+	        	$(".dial").knob();
+	   		});
+		</script>
+
+		<input type="text" value="75" class="dial">
+
+	    <script>
+	    	$(function() {
+	        	$(".dial").knob();
+	   		});
+		</script>
+	</div>
   	<p>This is our DT2410 project to record audio, analyze the spectrum, and play it back. It uses HTML5 Web Audio javascript libraries and <a href="https://github.com/higuma/web-audio-recorder-js" target="_blank">WebAudioRecorder.js</a> to record audio and encode to common formats (pcm, Vorbis, mp3) directly in the browser.</p>
 
 	<p>Convert recorded audio to:<br>
@@ -88,6 +113,7 @@
   	<!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
 	<script src="js/WebAudioRecorder.min.js"></script>
 	<script src="js/app.js"></script>
+
 
   </body>
 </html>
