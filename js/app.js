@@ -90,10 +90,36 @@ window.onload = function() {
         input.onmidimessage = getMIDIMessage;
 	}
 
-	function getMIDIMessage(midiMessage) {
-    	console.log(midiMessage);
-	}
-
+    function getMIDIMessage(message) {
+    var device = message.data[0];
+    var button = message.data[1];
+    var position = (message.data.length > 2) ? message.data[2] : 0; // a velocity value might not be included with a noteOff command
+    console.log(message);
+    switch (button) {
+        case 8: // noteOn
+            $(".dial1").val(position).trigger('change');
+            break;
+        case 9:
+            $(".dial2").val(position).trigger('change');
+            break;
+        case 10:
+            $(".dial3").val(position).trigger('change');
+            break;
+        case 12:
+            $(".dial4").val(position).trigger('change');
+            break;
+        case 13:
+            $(".dial5").val(position).trigger('change');
+            break;
+        case 14:
+            $(".dial6").val(position).trigger('change');
+            break;
+        //case 128: // noteOff
+            //noteOff(note);
+            //break;
+        // we could easily expand this switch statement to cover other types of commands such as controllers or sysex
+    }
+}
 	function onMIDIFailure() {
 	    console.log('Could not access your MIDI devices.');
 	}
