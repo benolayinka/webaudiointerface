@@ -39,29 +39,31 @@
       </tr>
     <table>
     <div>
-	    <input type="text" value="75" class="dial">
+	    <input type="text" value="0" class="dial1" data-min="-50" data-max="50" data-width="100" data-fgColor="#ffec03" data-angleOffset=-125 data-angleArc=250 data-displayInput=true data-cursor=true data-skin=tron>
 
-	    <script>
-	    	$(function() {
-	        	$(".dial").knob();
-	   		});
+	    <input type="text" value="0" class="dial2" data-min="-50" data-max="50" data-width="100" data-fgColor="#0000FF" data-angleOffset=-125 data-angleArc=250 data-displayInput=true data-cursor=true data-skin=tron>
+
+	    <input type="text" value="0" class="dial3" data-min="-50" data-max="50" data-width="100"data-fgColor="#FE2E2E" data-angleOffset=-125 data-angleArc=250 data-displayInput=true data-cursor=true data-skin=tron>
+	    
+	    <script>	
+        	$(".dial1").knob({
+        		'release' : function (v) { /*make something*/ }
+		        });
 		</script>
 
-		<input type="text" value="75" class="dial">
-
-	    <script>
-	    	$(function() {
-	        	$(".dial").knob();
-	   		});
+		<script>	
+        	$(".dial2").knob({
+        		'release' : function (v) { /*make something*/ }
+		        });
 		</script>
 
-		<input type="text" value="75" class="dial">
-
-	    <script>
-	    	$(function() {
-	        	$(".dial").knob();
-	   		});
+		<script>	
+        	$(".dial3").knob({
+        		'release' : function (v) { /*make something*/ }
+		        });
 		</script>
+	</div>
+	</div>
 	</div>
   	<p>This is our DT2410 project to record audio, analyze the spectrum, and play it back. It uses HTML5 Web Audio javascript libraries and <a href="https://github.com/higuma/web-audio-recorder-js" target="_blank">WebAudioRecorder.js</a> to record audio and encode to common formats (pcm, Vorbis, mp3) directly in the browser.</p>
 
