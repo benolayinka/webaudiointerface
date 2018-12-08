@@ -157,7 +157,7 @@ function start() {
 		input = audioContext.createMediaStreamSource(stream);
 		
 		//stop the input from playing back through the speakers
-		//input.connect(audioContext.destination)
+		input.connect(audioContext.destination)
 		audioPlaying = true;
 		setupAudioNodes();
 		
@@ -190,14 +190,54 @@ function start() {
 
  	//reinier this is where you need to add some code :)
 
-	navigator.mediaDevices.enumerateDevices().then(gotDevices);
+  	navigator.mediaDevices.getUserMedia(constraints2).then(function(stream2) {
+		__log("getUserMedia() success, stream created from source 2");
+
+		/*
+			create an audio context after getUserMedia is called
+			sampleRate might change after getUserMedia is called, like it does on macOS when recording through AirPods
+			the sampleRate defaults to the one set in your OS for your playback device
+
+		*/
+		audioContext = new AudioContext();
+
+		//assign to gumStream for later use
+		gumStream2 = stream2;
+		
+		/* use the stream */
+		input2 = audioContext.createMediaStreamSource(stream2);
+		
+		//stop the input from playing back through the speakers
+		input2.connect(audioContext.destination)
+		audioPlaying = true;
+		setupAudioNodes();
+		
+	    // setup the event handler that is triggered every time enough samples have been collected
+	    // trigger the audio analysis and draw the results
+	    javascriptNode.onaudioprocess = function () {
+	        // get the Time Domain data for this sample
+	        analyserNode.getFloatTimeDomainData(amplitudeArray);
+	        analyserNode.getByteFrequencyData(frequencyArray);
+	        // draw the display if the audio is playing
+	        if (audioPlaying == true) {
+	            requestAnimFrame(drawTimeDomain);
+	            requestAnimFrame(drawdb);
+	        }
+	    }
+
+	    }).catch(function(err) {
+	  	//enable the record button if getUSerMedia() fails
+	  	alert(err);
+    	//recordButton.disabled = false;
+    	//stopButton.disabled = true;
+    })
 }
 
 function startRecording() {
 	console.log("startRecording() called");
 
 		//update the format 
-		document.getElementById("formats").innerHTML="Format: 2 channel "+encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value+" @ "+audioContext.sampleRate/1000+"kHz"
+		document.getElementById("formats").innerHTML="Format: 2 channel "+encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value+" @ 44.1 kHz"
 
 		//get the encoding 
 		encodingType = encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value;
@@ -285,6 +325,7 @@ function createDownloadLink(blob,encoding) {
 	recordingsList.appendChild(li);
 }
 
+/*
 function setupAudioNodes() {
 	low = audioContext.createBiquadFilter();
 	low.type = "lowshelf";
@@ -320,6 +361,7 @@ function setupAudioNodes() {
     analyserNode.connect(javascriptNode);
     javascriptNode.connect(audioContext.destination);
 }
+*/
 
 function drawTimeDomain() {
     clearCanvas();
