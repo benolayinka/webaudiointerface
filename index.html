@@ -16,14 +16,14 @@
     <table class=center> 
       <tr> 
         <th>Input 1         
-        <div class="select">
-        <label for="audioSource">Audio input source: </label><select id="audioSource1"></select>
-    	 </div>
+          <div class="select">
+            <label for="audioSource">Audio input source: </label><select id="audioSource1"></select>
+    	     </div>
         </th> 
         <th>Input 2
-       	<div class="select">
-        <label for="audioSource">Audio input source: </label><select id="audioSource2"></select>
-    	 </div>
+         	<div class="select">
+          <label for="audioSource">Audio input source: </label><select id="audioSource2"></select>
+      	 </div>
         </th> 
       </tr> 
       <tr> 
@@ -34,45 +34,36 @@
         <td><canvas id="db" width="500" height="50" ></canvas></td>
         <td><canvas id="db2" width="500" height="50" ></canvas></td>
       </tr>
+      <tr>
+        <td>
+        <div>
+    	    <input type="text" value="0" class="dial1" data-min="-50" data-max="50" data-width="100" data-fgColor="#ffec03" data-angleOffset=-125 data-angleArc=250 data-displayInput=true data-cursor=true data-skin=tron>
 
-      <tr> 
-        <th>EQ 1       
-        <div id="knob1">
-       </div>
-        </th> 
-        <th>EQ 2
-        <div id="knob2">
-       </div>
-        </th> 
-      </tr> 
+    	    <input type="text" value="0" class="dial2" data-min="-50" data-max="50" data-width="100" data-fgColor="#0000FF" data-angleOffset=-125 data-angleArc=250 data-displayInput=true data-cursor=true data-skin=tron>
+
+    	    <input type="text" value="0" class="dial3" data-min="-50" data-max="50" data-width="100"data-fgColor="#FE2E2E" data-angleOffset=-125 data-angleArc=250 data-displayInput=true data-cursor=true data-skin=tron>
+    	    
+    	    <script>	
+            	$(".dial1").knob({
+            		'release' : function (v) { /*make something*/ }
+    		        });
+    		  </script>
+
+      		<script>	
+              	$(".dial2").knob({
+              		'release' : function (v) { /*make something*/ }
+      		        });
+      		</script>
+
+      		<script>	
+              	$(".dial3").knob({
+              		'release' : function (v) { /*make something*/ }
+      		        });
+      		</script>
+    	 </div>
+      </td>
       </tr>
-    <table>
-    <div>
-	    <input type="text" value="0" class="dial1" data-min="-50" data-max="50" data-width="100" data-fgColor="#ffec03" data-angleOffset=-125 data-angleArc=250 data-displayInput=true data-cursor=true data-skin=tron>
-
-	    <input type="text" value="0" class="dial2" data-min="-50" data-max="50" data-width="100" data-fgColor="#0000FF" data-angleOffset=-125 data-angleArc=250 data-displayInput=true data-cursor=true data-skin=tron>
-
-	    <input type="text" value="0" class="dial3" data-min="-50" data-max="50" data-width="100"data-fgColor="#FE2E2E" data-angleOffset=-125 data-angleArc=250 data-displayInput=true data-cursor=true data-skin=tron>
-	    
-	    <script>	
-        	$(".dial1").knob({
-        		'release' : function (v) { /*make something*/ }
-		        });
-		</script>
-
-		<script>	
-        	$(".dial2").knob({
-        		'release' : function (v) { /*make something*/ }
-		        });
-		</script>
-
-		<script>	
-        	$(".dial3").knob({
-        		'release' : function (v) { /*make something*/ }
-		        });
-		</script>
-	</div>
-	</div>
+</table>
 	</div>
   	<p>This is our DT2410 project to record audio, analyze the spectrum, and play it back. It uses HTML5 Web Audio javascript libraries and <a href="https://github.com/higuma/web-audio-recorder-js" target="_blank">WebAudioRecorder.js</a> to record audio and encode to common formats (pcm, Vorbis, mp3) directly in the browser.</p>
 
@@ -96,9 +87,11 @@
 
 	<style>
 
-            div.table_container {
+            .table_container {
               margin-left: auto;
               margin-right: auto;
+              width: -1000px;
+              margin: auto;
             }
             #canvas {
                 display: block;
