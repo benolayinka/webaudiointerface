@@ -230,7 +230,11 @@ Track.prototype.drawdb = function() {
     var rms =  Math.sqrt(sum / this.amplitudeArray.length);
     this.smooth = Math.max(rms, this.smoothing*this.smooth);
     dbs = Math.log10(this.smooth);
-    this.dbx.fillStyle = '#ffffff';
+    var gradient=this.dbx.createLinearGradient(0,0,600,0);
+	gradient.addColorStop(0,"green");
+	gradient.addColorStop(0.6,"orange");
+	gradient.addColorStop(0.8,"red");
+    this.dbx.fillStyle = gradient;
     this.dbx.fillRect(0, 0, this.db.width+dbs*this.db.width, this.db.height);
 }
 
