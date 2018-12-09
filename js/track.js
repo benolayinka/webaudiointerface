@@ -115,18 +115,18 @@ function Track(name, element) {
 	navigator.mediaDevices.enumerateDevices().then(this.gotDevices.bind(this));
 
 	$("." + this.name + "dialLow").knob(
-									{'min':0,
-									 'max':127,
-								    'width':100,
-								    'fgColor':'#00FF00',
-								    'angleOffset':-125, 
-								    'angleArc':250,
-								    'displayInput':true,
-								    'cursor':true,
-								    'skin':'tron',
-								    'change' : this.lowEQ.bind(this)
-								    	}
-		    						).val(66).trigger('change');
+		{'min':0,
+		 'max':127,
+	    'width':100,
+	    'fgColor':'#00FF00',
+	    'angleOffset':-125, 
+	    'angleArc':250,
+	    'displayInput':true,
+	    'cursor':true,
+	    'skin':'tron',
+	    'change' : this.lowEQ.bind(this)
+	    	}
+		).val(66).trigger('change');
 		    
 	
 	$("." + this.name + "dialMid").knob(
@@ -189,19 +189,9 @@ Track.prototype.start = function() {
 }
 
 Track.prototype.startStream = function(stream) {
-		console.log("getUserMedia() success, stream created from source");
 
-		/*
-			create an audio context after getUserMedia is called
-			sampleRate might change after getUserMedia is called, like it does on macOS when recording through AirPods
-			the sampleRate defaults to the one set in your OS for your playback device
-
-		*/
-		
-		/* use the stream */
 		this.input = audioContext.createMediaStreamSource(stream);
-		
-		//stop the input from playing back through the speakers
+
 		this.audioPlaying = true;
 		this.setupAudioNodes();
 
@@ -220,7 +210,6 @@ Track.prototype.startStream = function(stream) {
 	        }
 	    }
 
-	    // setup the event handler that is triggered every time enough samples have been collected
 	    // trigger the audio analysis and draw the results
 	    this.javascriptNode.onaudioprocess = onaudio.bind(this);
 	}
@@ -265,7 +254,7 @@ Track.prototype.setupAudioNodes = function() {
     this.analyserNode.connect(this.javascriptNode);
     this.javascriptNode.connect(audioContext.destination);
 
-    this.input.connect(this.gainNode);
+    this.filter.connect(this.gainNode);
     this.gainNode.connect(audioContext.destination)
 
 	window.outputtrack = this.filter;
