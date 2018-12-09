@@ -4,6 +4,7 @@ var encodingType; 					//holds selected encoding for resulting audio (file)
 var encodeAfterRecord = true;       // when to encode
 var track1;
 var track2;
+var master;
 
 window.onload = function() {
 
@@ -18,10 +19,11 @@ window.onload = function() {
 	track1 = new Track("track1", document.getElementById("track1"));
 	track2 = new Track("track2", document.getElementById("track2"));
 
+	track1.start();
+	track2.start();
+
 	navigator.requestMIDIAccess()
 	    .then(onMIDISuccess, onMIDIFailure);
-
-	track1.start();
 
 }
 
@@ -78,7 +80,7 @@ function startRecording() {
 		encodingTypeSelect.disabled = true;
 
 		//ben recording output of audio context
-		recorder = new WebAudioRecorder(window.outputtrack, {
+		recorder = new WebAudioRecorder(master, {
 		  workerDir: "js/", // must end with slash
 		  encoding: encodingType,
 		  numChannels:2, //2 is the default, mp3 encoding supports only 2

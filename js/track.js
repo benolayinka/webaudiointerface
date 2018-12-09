@@ -13,6 +13,9 @@ window.requestAnimFrame = (function(){
 var AudioContext = window.AudioContext || window.webkitAudioContext;
 var audioContext = new AudioContext();
 
+var master = audioContext.createGain();
+master.gain.value = 1;
+
 function Track(name, element) {
 
   	this.name = name;
@@ -23,6 +26,9 @@ function Track(name, element) {
 	this.sampleSize = 1024;
 
 	this.input = null;
+	this.output = null;
+
+	this.audioplaying = false;
 
 
 	//var e = document.createElement("div");
@@ -192,8 +198,9 @@ Track.prototype.startStream = function(stream) {
 
 		this.input = audioContext.createMediaStreamSource(stream);
 
-		this.audioPlaying = true;
 		this.setupAudioNodes();
+
+		this.audioPlaying = true;
 
 	    var onaudio = function (track) {
 	        // get the Time Domain data for this sample
@@ -257,7 +264,8 @@ Track.prototype.setupAudioNodes = function() {
     this.filter.connect(this.gainNode);
     this.gainNode.connect(audioContext.destination)
 
-	window.outputtrack = this.filter;
+	this.output = this.filter;
+	this.output.connect(master);
 
     if(this.monitor.checked){
     	this.gainNode.gain.setValueAtTime(1, audioContext.currentTime);
