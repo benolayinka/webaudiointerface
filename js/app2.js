@@ -93,12 +93,6 @@ function startRecording() {
 
 function stopRecording() {
 	console.log("stopRecording() called");
-	
-	//stop microphone access
-	gumStream.getAudioTracks()[0].stop();
-
-	//ben
-	audioPlaying = false;
 
 	//disable the stop button
 	stopButton.disabled = true;
