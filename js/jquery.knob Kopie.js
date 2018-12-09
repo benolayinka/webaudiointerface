@@ -2,7 +2,7 @@
 /**
  * Downward compatible, touchable dial
  *
- * Version: 1.2.11
+ * Version: 1.2.12
  * Requires: jQuery v1.7+
  *
  * Copyright (c) 2012 Anthony Terrien
@@ -10,6 +10,7 @@
  *
  * Thanks to vor, eskimoblood, spiffistan, FabrizioC
  */
+
 (function (factory) {
     if (typeof exports === 'object') {
         // CommonJS
@@ -21,6 +22,7 @@
         // Browser globals
         factory(jQuery);
     }
+
 }(function ($) {
 
     /**
@@ -160,9 +162,6 @@
                             var val = {};
                             val[k] = $this.val();
                             s.val(s._validate(val));
-                            var v = s._validate(val);
-                            if (s.cH && s.cH(v) === false) return;
-                            s.val(v);
                         }
                     );
                 });
@@ -176,9 +175,7 @@
                 this.$.bind(
                     'change blur',
                     function () {
-                        var v = s._validate(s.o.parse(s.$.val()));
-                        if (s.cH && s.cH(v) === false) return;
-                        s.val(v);
+                        s.val(s._validate(s.o.parse(s.$.val())));
                     }
                 );
 
@@ -302,7 +299,7 @@
             }
 
             return this;
-        }
+        };
 
         this._draw = function () {
 
@@ -477,7 +474,7 @@
         // Utils
         this.h2rgba = function (h, a) {
             var rgb;
-            h = h.substring(1,7)
+            h = h.substring(1,7);
             rgb = [
                 parseInt(h.substring(0,2), 16),
                 parseInt(h.substring(2,4), 16),
@@ -645,7 +642,6 @@
                                 s.o.stopper && (v = max(min(v, s.o.max), s.o.min));
 
                                 s.change(s._validate(v));
-                                s.cH(v);
                                 s._draw();
 
                                 // long time keydown speed-up
@@ -675,7 +671,7 @@
                 );
 
             this.$c.bind("mousewheel DOMMouseScroll", mw);
-            this.$.bind("mousewheel DOMMouseScroll", mw)
+            this.$.bind("mousewheel DOMMouseScroll", mw);
         };
 
         this.init = function () {

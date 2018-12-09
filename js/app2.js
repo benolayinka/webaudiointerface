@@ -2,6 +2,8 @@ var recorder; 						//WebAudioRecorder object
 var input; 							//MediaStreamAudioSourceNode  we'll be recording
 var encodingType; 					//holds selected encoding for resulting audio (file)
 var encodeAfterRecord = true;       // when to encode
+var track1;
+var track2;
 
 window.onload = function() {
 
@@ -13,8 +15,8 @@ window.onload = function() {
 	recordButton.addEventListener("click", startRecording);
 	stopButton.addEventListener("click", stopRecording);
 
-	var track1 = new Track("track1", document.getElementById("track1"));
-	var track2 = new Track("track2", document.getElementById("track2"));
+	track1 = new Track("track1", document.getElementById("track1"));
+	track2 = new Track("track2", document.getElementById("track2"));
 
 	navigator.requestMIDIAccess()
 	    .then(onMIDISuccess, onMIDIFailure);
@@ -33,8 +35,34 @@ function onMIDISuccess(midiAccess) {
         input.onmidimessage = getMIDIMessage;
 }
 
-function getMIDIMessage(midiMessage) {
-	console.log(midiMessage);
+function getMIDIMessage(message) {
+	var device = message.data[0];
+    var button = message.data[1];
+    var position = (message.data.length > 2) ? message.data[2] : 0; // a velocity value might not be included with a noteOff command
+    switch (button) {
+        case 8: // noteOn
+            $(".track1dialLow").val(position).trigger('change');
+            break;
+        case 9:
+            $(".track1dialMid").val(position).trigger('change');
+            break;
+        case 10:
+            $(".track1dialHigh").val(position).trigger('change');
+            break;
+        case 12:
+            $(".track1dialLow").val(position).trigger('change');
+            break;
+        case 13:
+            $(".track2dialMid").val(position).trigger('change');
+            break;
+        case 14:
+            $(".track2dialHigh").val(position).trigger('change');
+            break;
+        //case 128: // noteOff
+            //noteOff(note);
+            //break;
+        // we could easily expand this switch statement to cover other types of commands such as controllers or sysex
+    }
 }
 
 function onMIDIFailure() {

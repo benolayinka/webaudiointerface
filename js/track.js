@@ -88,14 +88,19 @@ function Track(name, element) {
 
 	var dialLow = document.createElement("input");
 	dialLow.type = "text";
-	dialLow.classList.add('dialLow');
+	dialLow.classList.add(this.name + 'dialLow');
+	dialLow.value = 66;
+	this.dialLow = dialLow;
 	var dialMid = document.createElement("input");
 	dialMid.type = "text";
-	dialMid.classList.add('dialMid');
-	
+	dialMid.classList.add(this.name + 'dialMid');
+	dialMid.value = 66;
+	this.dialMid = dialMid;
 	var dialHigh = document.createElement("input");
 	dialHigh.type = "text";
-	dialHigh.classList.add('dialHigh');
+	dialHigh.classList.add(this.name + 'dialHigh');
+	dialHigh.value = 66;
+	this.dialHigh = dialHigh;
 	
 	
 	e.appendChild(dialLow);
@@ -109,21 +114,22 @@ function Track(name, element) {
 
 	navigator.mediaDevices.enumerateDevices().then(this.gotDevices.bind(this));
 
-	$(".dialLow").knob(
-		{'min':0,
-		 'max':127,
-		    'width':100,
-		    'fgColor':'#ffec03',
-		    'angleOffset':-125, 
-		    'angleArc':250,
-		    'displayInput':true,
-		    'cursor':true,
-		    'skin':'tron'
-		    }
-		    );
+	$("." + this.name + "dialLow").knob(
+									{'min':0,
+									 'max':127,
+								    'width':100,
+								    'fgColor':'#ffec03',
+								    'angleOffset':-125, 
+								    'angleArc':250,
+								    'displayInput':true,
+								    'cursor':true,
+								    'skin':'tron',
+								    'change' : this.lowEQ.bind(this)
+								    	}
+		    						).val(66).trigger('change');
 		    
 	
-	$(".dialMid").knob(
+	$("." + this.name + "dialMid").knob(
 		{'min':0,
 		 'max':127,
 		    'width':100,
@@ -132,10 +138,12 @@ function Track(name, element) {
 		    'angleArc':250,
 		    'displayInput':true,
 		    'cursor':true,
-		    'skin':'tron'
+		    'skin':'tron',
+		    'change' : this.midEQ.bind(this)
 		    }
-		    );
-	$(".dialHigh").knob(
+		    ).val(66).trigger('change');
+
+	$("." + this.name + "dialHigh").knob(
 		{'min':0,
 		 'max':127,
 		    'width':100,
@@ -144,12 +152,25 @@ function Track(name, element) {
 		    'angleArc':250,
 		    'displayInput':true,
 		    'cursor':true,
-		    'skin':'tron'
+		    'skin':'tron',
+		    'change' : this.highEQ.bind(this)
 		    }
-		    );
-	//navigator.mediaDevices.enumerateDevices().then(function(devices){(devices) => this.gotDevices(devices)});
-
+		    ).val(66).trigger('change');
+	
 }
+
+Track.prototype.lowEQ = function(val) {
+	console.log('gain changed to ' + val)
+	this.low.gain.value = (val - 64)/2
+  }
+
+Track.prototype.midEQ = function(val) {
+	this.mid.gain.value = (val - 64)/2
+  }
+
+Track.prototype.highEQ = function(val) {
+	this.high.gain.value = (val - 64)/2
+  }
 
 Track.prototype.start = function() {
 	if (window.stream) {
