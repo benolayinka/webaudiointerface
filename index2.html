@@ -6,23 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="style.css">
     <script src="js/jquery.js"></script>
+    <script src="js/jquery.knob.js"></script>
   </head>
   <body>
   	<br>
-  	<script src="js/jquery.knob.js"></script>
   	<h1>WDT2410 Recorder and Spectrum Analyzer</h1>
    
   <div class="aligner">
-  <div id="trackContainer">
-  </div>
-  <div class="midi">MIDI Input: <select id=midiIn onchange='changeMidiIn();'>
-        <option value="">Not connected</option>
-      </select>
-     MIDI Output:
-      <select id=midiOut onchange='changeMidiOut();'>
-        <option value="">Not connected</option>
-      </select>
-  </div>
+    <div id="trackContainer">
+      <table>
+        <tr>
+          <th id = "track1">
+          </th>
+          <th id = "track2">
+          </th>
+        </tr>
+      </table>
+    </div>
+    <div class="midi">MIDI Input: <select id=midiIn onchange='changeMidiIn();'>
+          <option value="">Not connected</option>
+        </select>
+       MIDI Output:
+        <select id=midiOut onchange='changeMidiOut();'>
+          <option value="">Not connected</option>
+        </select>
+    </div>
 </div>
 
   	<p>This is our DT2410 project to record audio, analyze the spectrum, and play it back. It uses HTML5 Web Audio javascript libraries and <a href="https://github.com/higuma/web-audio-recorder-js" target="_blank">WebAudioRecorder.js</a> to record audio and encode to common formats (pcm, Vorbis, mp3) directly in the browser.</p>
@@ -48,7 +56,7 @@
 	<style>
 
             .table_container {
-              margin-left: auto;
+              margin-left: 3%;
               margin-right: auto;
               width: 1000px;
               margin: auto;

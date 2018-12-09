@@ -11,7 +11,7 @@ window.requestAnimFrame = (function(){
             })();
 
 var AudioContext = window.AudioContext || window.webkitAudioContext;
-var audioContext = new AudioContext(); //new audio context to help us record
+var audioContext = new AudioContext();
 
 function Track(name, element) {
 
@@ -21,6 +21,8 @@ function Track(name, element) {
 	this.smoothing = 0.95;
 	this.smooth = 0;
 	this.sampleSize = 1024;
+
+	this.input = null;
 
 
 	//var e = document.createElement("div");
@@ -36,14 +38,35 @@ function Track(name, element) {
 	source.onchange = this.start.bind(this);
 	e.appendChild(source);
 
+	e.appendChild(document.createElement("br"));
+
+	var vis = document.createElement("label");
+	vis.innerText = "Visualizer: ";
+	e.appendChild(vis)
+
 	var graph = document.createElement("select");
 	var option = document.createElement('option');
-	option.value = "Time";
+	option.text = "Time";
+	option.value = 1;
 	graph.appendChild(option);
 	option = document.createElement('option');
-	option.value = "Frequency";
+	option.text = "Frequency";
+	option.value = 0;
 	graph.appendChild(option);
 	e.appendChild(graph);
+	this.vis = graph;
+
+	e.appendChild(document.createElement("br"));
+
+	var mon = document.createElement("label");
+	mon.innerText = "Monitor: ";
+	e.appendChild(mon)
+
+	var monitor = document.createElement("input");
+	monitor.type = "checkbox";
+	monitor.onchange = this.monitor.bind(this);
+	this.monitor = monitor
+	e.appendChild(monitor)
 
 	var canvas = document.createElement("canvas");
 	canvas.className = "visualizer";
@@ -66,8 +89,19 @@ function Track(name, element) {
 	var dialLow = document.createElement("input");
 	dialLow.type = "text";
 	dialLow.classList.add('dialLow');
+	var dialMid = document.createElement("input");
+	dialMid.type = "text";
+	dialMid.classList.add('dialMid');
+	
+	var dialHigh = document.createElement("input");
+	dialHigh.type = "text";
+	dialHigh.classList.add('dialHigh');
+	
 	
 	e.appendChild(dialLow);
+	e.appendChild(dialMid);
+	e.appendChild(dialHigh);
+
 
 
 	document.getElementById( "trackContainer" ).appendChild(e);
@@ -75,7 +109,44 @@ function Track(name, element) {
 
 	navigator.mediaDevices.enumerateDevices().then(this.gotDevices.bind(this));
 
-	$(".dialLow").knob();
+	$(".dialLow").knob(
+		{'min':0,
+		 'max':127,
+		    'width':100,
+		    'fgColor':'#ffec03',
+		    'angleOffset':-125, 
+		    'angleArc':250,
+		    'displayInput':true,
+		    'cursor':true,
+		    'skin':'tron'
+		    }
+		    );
+		    
+	
+	$(".dialMid").knob(
+		{'min':0,
+		 'max':127,
+		    'width':100,
+		    'fgColor':'#0000FF',
+		    'angleOffset':-125, 
+		    'angleArc':250,
+		    'displayInput':true,
+		    'cursor':true,
+		    'skin':'tron'
+		    }
+		    );
+	$(".dialHigh").knob(
+		{'min':0,
+		 'max':127,
+		    'width':100,
+		    'fgColor':'#FE2E2E',
+		    'angleOffset':-125, 
+		    'angleArc':250,
+		    'displayInput':true,
+		    'cursor':true,
+		    'skin':'tron'
+		    }
+		    );
 	//navigator.mediaDevices.enumerateDevices().then(function(devices){(devices) => this.gotDevices(devices)});
 
 }
@@ -105,15 +176,11 @@ Track.prototype.startStream = function(stream) {
 			the sampleRate defaults to the one set in your OS for your playback device
 
 		*/
-
-		//assign to gumStream for later use
-		this.gumStream = stream;
 		
 		/* use the stream */
 		this.input = audioContext.createMediaStreamSource(stream);
 		
 		//stop the input from playing back through the speakers
-		this.input.connect(audioContext.destination)
 		this.audioPlaying = true;
 		this.setupAudioNodes();
 
@@ -122,8 +189,12 @@ Track.prototype.startStream = function(stream) {
 	        this.analyserNode.getFloatTimeDomainData(this.amplitudeArray);
 	        this.analyserNode.getByteFrequencyData(this.frequencyArray);
 	        // draw the display if the audio is playing
-	        if (this.audioPlaying == true) {
+	        if (this.vis.value == 1) {
 	            requestAnimFrame(this.drawTimeDomain.bind(this));
+	            requestAnimFrame(this.drawdb.bind(this));
+	        }
+	        else {
+	        	requestAnimFrame(this.drawFrequencyDomain.bind(this));
 	            requestAnimFrame(this.drawdb.bind(this));
 	        }
 	    }
@@ -134,6 +205,7 @@ Track.prototype.startStream = function(stream) {
 	}
 
 Track.prototype.setupAudioNodes = function() {
+
 	this.low = audioContext.createBiquadFilter();
 	this.low.type = "lowshelf";
 	this.low.frequency.value = 320.0;
@@ -151,8 +223,11 @@ Track.prototype.setupAudioNodes = function() {
 	this.high.gain.value = 0.0;
 
 	this.filter = audioContext.createBiquadFilter();
-	this.filter.frequency.value = 20000.0;
-	this.filter.type = this.filter.LOWPASS;
+	this.filter.frequency.value = 0.0;
+	this.filter.type = "highpass"
+
+	this.gainNode = audioContext.createGain();
+	this.gainNode.gain.value = 0;
 
     this.analyserNode   = audioContext.createAnalyser();
     this.javascriptNode = audioContext.createScriptProcessor(this.sampleSize, 1, 1);
@@ -160,13 +235,35 @@ Track.prototype.setupAudioNodes = function() {
     this.amplitudeArray = new Float32Array(this.analyserNode.frequencyBinCount);
     this.frequencyArray = new Uint8Array(this.analyserNode.frequencyBinCount);
     // Now connect the nodes together
-    this.input.connect(this.low); //ben added source
+
+    this.input.connect(this.low);
     this.low.connect(this.mid);
     this.mid.connect(this.high);
     this.high.connect(this.filter);
     this.filter.connect(this.analyserNode);
     this.analyserNode.connect(this.javascriptNode);
     this.javascriptNode.connect(audioContext.destination);
+
+    this.input.connect(this.gainNode);
+    this.gainNode.connect(audioContext.destination)
+
+	window.outputtrack = this.filter;
+
+    if(this.monitor.checked){
+    	this.gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+    }
+    else {
+    	this.gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    }
+}
+
+Track.prototype.monitor = function() {
+	if(this.monitor.checked){
+    	this.gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+    }
+    else {
+    	this.gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    }
 }
 
 Track.prototype.gotDevices = function(deviceInfos) {
@@ -206,6 +303,16 @@ Track.prototype.drawTimeDomain = function() {
 	this.clearCanvas();
 	for (var i = 0; i < this.amplitudeArray.length; i++) {
         var value = this.amplitudeArray[i]/2 + 0.5; //convert [-1 1] float to [0 to 1]
+        var y = this.canvas.height - (this.canvas.height * value) - 1;
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.fillRect(i, y, 1, 1);
+    }
+}
+
+Track.prototype.drawFrequencyDomain = function() {
+	this.clearCanvas();
+	for (var i = 0; i < this.frequencyArray.length; i++) {
+        var value = this.frequencyArray[i]/256; //convert [-1 1] float to [0 to 1]
         var y = this.canvas.height - (this.canvas.height * value) - 1;
         this.ctx.fillStyle = '#ffffff';
         this.ctx.fillRect(i, y, 1, 1);
