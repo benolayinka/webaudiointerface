@@ -66,8 +66,19 @@ function Track(name, element) {
 	var dialLow = document.createElement("input");
 	dialLow.type = "text";
 	dialLow.classList.add('dialLow');
+	var dialMid = document.createElement("input");
+	dialMid.type = "text";
+	dialMid.classList.add('dialMid');
+	
+	var dialHigh = document.createElement("input");
+	dialHigh.type = "text";
+	dialHigh.classList.add('dialHigh');
+	
 	
 	e.appendChild(dialLow);
+	e.appendChild(dialMid);
+	e.appendChild(dialHigh);
+
 
 
 	document.getElementById( "trackContainer" ).appendChild(e);
@@ -75,7 +86,44 @@ function Track(name, element) {
 
 	navigator.mediaDevices.enumerateDevices().then(this.gotDevices.bind(this));
 
-	$(".dialLow").knob();
+	$(".dialLow").knob(
+		{'min':0,
+		 'max':127,
+		    'width':100,
+		    'fgColor':'#ffec03',
+		    'angleOffset':-125, 
+		    'angleArc':250,
+		    'displayInput':true,
+		    'cursor':true,
+		    'skin':'tron'
+		    }
+		    );
+		    
+	
+	$(".dialMid").knob(
+		{'min':0,
+		 'max':127,
+		    'width':100,
+		    'fgColor':'#0000FF',
+		    'angleOffset':-125, 
+		    'angleArc':250,
+		    'displayInput':true,
+		    'cursor':true,
+		    'skin':'tron'
+		    }
+		    );
+	$(".dialHigh").knob(
+		{'min':0,
+		 'max':127,
+		    'width':100,
+		    'fgColor':'#FE2E2E',
+		    'angleOffset':-125, 
+		    'angleArc':250,
+		    'displayInput':true,
+		    'cursor':true,
+		    'skin':'tron'
+		    }
+		    );
 	//navigator.mediaDevices.enumerateDevices().then(function(devices){(devices) => this.gotDevices(devices)});
 
 }
