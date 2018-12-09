@@ -118,7 +118,7 @@ function Track(name, element) {
 									{'min':0,
 									 'max':127,
 								    'width':100,
-								    'fgColor':'#ffec03',
+								    'fgColor':'#00FF00',
 								    'angleOffset':-125, 
 								    'angleArc':250,
 								    'displayInput':true,
@@ -358,7 +358,11 @@ Track.prototype.drawdb = function() {
     var rms =  Math.sqrt(sum / this.amplitudeArray.length);
     this.smooth = Math.max(rms, this.smoothing*this.smooth);
     dbs = Math.log10(this.smooth);
-    this.dbx.fillStyle = '#ffffff';
+    var gradient=this.dbx.createLinearGradient(0,0,600,0);
+	gradient.addColorStop(0,"green");
+	gradient.addColorStop(0.6,"orange");
+	gradient.addColorStop(0.8,"red");
+    this.dbx.fillStyle = gradient;
     this.dbx.fillRect(0, 0, this.db.width+dbs*this.db.width, this.db.height);
 }
 
