@@ -113,7 +113,7 @@ function Track(name, element) {
 		{'min':0,
 		 'max':127,
 		    'width':100,
-		    'fgColor':'#ffec03',
+		    'fgColor':'#00FF00',
 		    'angleOffset':-125, 
 		    'angleArc':250,
 		    'displayInput':true,
