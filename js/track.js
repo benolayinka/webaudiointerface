@@ -43,6 +43,7 @@ function Track(name, element) {
 	option = document.createElement('option');
 	option.value = "Frequency";
 	graph.appendChild(option);
+	e.appendChild(graph);
 
 	var canvas = document.createElement("canvas");
 	canvas.className = "visualizer";
@@ -64,34 +65,17 @@ function Track(name, element) {
 
 	var dialLow = document.createElement("input");
 	dialLow.type = "text";
-	dialLow.class = "dialLow"
-	var knob = pureknob.createKnob(300, 300);			
-	// Set properties.
-	knob.setProperty('angleStart', -0.75 * Math.PI);
-	knob.setProperty('angleEnd', 0.75 * Math.PI);
-	knob.setProperty('colorFG', '#88ff88');
-	knob.setProperty('trackWidth', 0.4);
-	knob.setProperty('valMin', 0);
-	knob.setProperty('valMax', 100);
+	dialLow.classList.add('dialLow');
 	
-	// Set initial value.
-	knob.setValue(50);
-
-	// Create element node.
-	var node = knob.node();
-	
-	// Add it to the DOM.
-	//var elem = document.getElementById('knob1');
-	dialLow.appendChild(node);
 	e.appendChild(dialLow);
 
-	
-	$(".dialLow").knob();
 
 	document.getElementById( "trackContainer" ).appendChild(e);
 	this.trackElement = e;
 
 	navigator.mediaDevices.enumerateDevices().then(this.gotDevices.bind(this));
+
+	$(".dialLow").knob();
 	//navigator.mediaDevices.enumerateDevices().then(function(devices){(devices) => this.gotDevices(devices)});
 
 }
