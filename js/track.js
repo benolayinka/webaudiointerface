@@ -20,6 +20,7 @@ function Track(name, element) {
 
   	this.name = name;
     this.element = element;
+
   	this.dbs = -99; //hack
 	this.smoothing = 0.95;
 	this.smooth = 0;
@@ -29,7 +30,6 @@ function Track(name, element) {
 	this.output = null;
 
 	this.audioplaying = false;
-
 
 	//var e = document.createElement("div");
 	var e = this.element
@@ -107,16 +107,21 @@ function Track(name, element) {
 	dialHigh.classList.add(this.name + 'dialHigh');
 	dialHigh.value = 66;
 	this.dialHigh = dialHigh;
+	var dialFilter = document.createElement("input");
+	dialFilter.type = "text";
+	dialFilter.classList.add(this.name + 'dialFilter');
+	dialFilter.value = 0;
+	this.dialFilter = dialFilter;
 	
 	
 	e.appendChild(dialLow);
 	e.appendChild(dialMid);
 	e.appendChild(dialHigh);
+	e.appendChild(dialFilter);
 
 
-
-	document.getElementById( "trackContainer" ).appendChild(e);
-	this.trackElement = e;
+	//document.getElementById( "trackContainer" ).appendChild(e);
+	//this.trackElement = e;
 
 	navigator.mediaDevices.enumerateDevices().then(this.gotDevices.bind(this));
 
@@ -162,11 +167,24 @@ function Track(name, element) {
 		    'change' : this.highEQ.bind(this)
 		    }
 		    ).val(66).trigger('change');
+
+	$("." + this.name + "dialFilter").knob(
+		{'min':0,
+		 'max':127,
+		    'width':100,
+		    'fgColor':'#000000',
+		    'angleOffset':-125, 
+		    'angleArc':250,
+		    'displayInput':true,
+		    'cursor':true,
+		    'skin':'tron',
+		    'change' : this.filterEQ.bind(this)
+		    }
+		    ).val(0).trigger('change');
 	
 }
 
 Track.prototype.lowEQ = function(val) {
-	console.log('gain changed to ' + val)
 	this.low.gain.value = (val - 64)/2
   }
 
@@ -177,6 +195,12 @@ Track.prototype.midEQ = function(val) {
 Track.prototype.highEQ = function(val) {
 	this.high.gain.value = (val - 64)/2
   }
+
+Track.prototype.filterEQ = function(val) {
+	var log = 10000*( Math.pow(2,((val/127.0*4)-1)) - 0.5)/7.5;
+	this.filter.frequency.value = log;
+	console.log('filter changed to ' + log)
+}
 
 Track.prototype.start = function() {
 	if (window.stream) {
@@ -241,6 +265,7 @@ Track.prototype.setupAudioNodes = function() {
 
 	this.filter = audioContext.createBiquadFilter();
 	this.filter.frequency.value = 0.0;
+	this.filter.Q.value = 13;
 	this.filter.type = "highpass"
 
 	this.gainNode = audioContext.createGain();

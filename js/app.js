@@ -1,14 +1,12 @@
-var recorder; 						//WebAudioRecorder object
-var input; 							//MediaStreamAudioSourceNode  we'll be recording
-var encodingType; 					//holds selected encoding for resulting audio (file)
-var encodeAfterRecord = true;       // when to encode
+var recorder; 			
+var input; 												
+var encodeAfterRecord = true;
 var track1;
 var track2;
 var master;
 
 window.onload = function() {
 
-	var encodingTypeSelect = document.getElementById("encodingTypeSelect");
 	var recordButton = document.getElementById("recordButton");
 	var stopButton = document.getElementById("stopButton");
 
@@ -68,49 +66,24 @@ function onMIDIFailure() {
 }
 
 function startRecording() {
-	console.log("startRecording() called");
-
-		//update the format 
-		document.getElementById("formats").innerHTML="Format: 2 channel "+encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value+" @ 44.1 kHz"
-
-		//get the encoding 
-		encodingType = encodingTypeSelect.options[encodingTypeSelect.selectedIndex].value;
-		
-		//disable the encoding selector
-		encodingTypeSelect.disabled = true;
-
-		//ben recording output of audio context
+		//record master bus
 		recorder = new WebAudioRecorder(master, {
 		  workerDir: "js/", // must end with slash
-		  encoding: encodingType,
-		  numChannels:2, //2 is the default, mp3 encoding supports only 2
-		  onEncoderLoading: function(recorder, encoding) {
-		    // show "loading encoder..." display
-		    __log("Loading "+encoding+" encoder...");
-		  },
-		  onEncoderLoaded: function(recorder, encoding) {
-		    // hide "loading encoder..." display
-		    __log(encoding+" encoder loaded");
-		  }
+		  encoding: "wav",
+		  numChannels:2
 		});
 
 		recorder.onComplete = function(recorder, blob) { 
-			__log("Encoding complete");
 			createDownloadLink(blob,recorder.encoding);
-			encodingTypeSelect.disabled = false;
 		}
 
 		recorder.setOptions({
 		  timeLimit:120,
-		  encodeAfterRecord:encodeAfterRecord,
-	      ogg: {quality: 0.5},
-	      mp3: {bitRate: 160}
+		  encodeAfterRecord:encodeAfterRecord
 	    });
 
 		//start the recording process
 		recorder.startRecording();
-
-		 __log("Recording started");
 
 	//disable the record button
     recordButton.disabled = true;
@@ -118,7 +91,6 @@ function startRecording() {
 }
 
 function stopRecording() {
-	console.log("stopRecording() called");
 
 	//disable the stop button
 	stopButton.disabled = true;
@@ -126,8 +98,6 @@ function stopRecording() {
 	
 	//tell the recorder to finish the recording (stop recording + encode the recorded audio)
 	recorder.finishRecording();
-
-	__log('Recording stopped');
 }
 
 function createDownloadLink(blob,encoding) {

@@ -9,28 +9,25 @@
     <script src="js/jquery.knob.js"></script>
   </head>
   <body>
-  	<br>
-  	<h1>WDT2410 Recorder and Spectrum Analyzer</h1>
-   
-  <div class="aligner">
-    <div id="trackContainer">
+    <div class="aligner">
+    <table>
+      <tr>
+  	   <th colspan = "2"><h1>DT2410 Recorder and Spectrum Analyzer</h1></th>
+      </tr>
+      <tr>
+        <td>
           <div id = "track1">
           </div>
+        </td>
+        <td>
           <div id = "track2">
           </div>
-    </div>
-    </div>
-</div>
+        </td>
+      </tr>
+    <td colspan = "2">
 
-  	<p>This is our DT2410 project to record audio, analyze the spectrum, and play it back. It uses HTML5 Web Audio javascript libraries and <a href="https://github.com/higuma/web-audio-recorder-js" target="_blank">WebAudioRecorder.js</a> to record audio and encode to common formats (pcm, Vorbis, mp3) directly in the browser.</p>
-
-	<p>Convert recorded audio to:<br>
-	<select id="encodingTypeSelect">
-	  <option value="wav">Waveform Audio (.wav)</option>
-	  <option value="mp3">MP3 (MPEG-1 Audio Layer III) (.mp3)</option>
-	  <option value="ogg">Ogg Vorbis (.ogg)</option>
-	</select>
-	</p>
+  	This is our DT2410 project to record audio, analyze the spectrum, and play it back. It uses HTML5 Web Audio javascript libraries and <a href="https://github.com/higuma/web-audio-recorder-js" target="_blank">WebAudioRecorder.js</a> to record audio and encode to common formats (pcm, Vorbis, mp3) directly in the browser.
+	
 	<div id="controls">
 		<button id="recordButton">Record</button>
 		<button id="stopButton" disabled>Stop</button>
@@ -41,13 +38,23 @@
 
 	<h3>Recordings</h3>
 	<ol id="recordingsList"></ol>
+</td>
+  </table>
+</div>
 
 	<style>
             html, body {
-              width: 100%;
+              width: 1100px;
+              max-width: 28rem;
             }
 
             table {
+              text-align: center;
+              border-spacing: 10px;
+            }
+
+            .aligner {
+              width: 1100px;
               margin: 0 auto;
             }
 
