@@ -332,7 +332,7 @@ Track.prototype.drawFrequencyDomain = function() {
 	for (var i = 0; i < this.frequencyArray.length; i++) {
         var value = this.frequencyArray[i]/256; //convert [-1 1] float to [0 to 1]
         var y = this.canvas.height - (this.canvas.height * value) - 1;
-        this.ctx.fillStyle = '#008000';
+        this.ctx.fillStyle = '#FB3005';
         this.ctx.fillRect(i, y, 2, 2);
     }
 }
