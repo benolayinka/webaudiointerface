@@ -1,6 +1,6 @@
-# Simple WebAudioRecorder.js demo
-A simple HTML/JS demo that uses [WebAudioRecorder.js](https://github.com/higuma/web-audio-recorder-js) to record mp3, wav and Vorbis audio on a web page.
+# DT2410 Web Audio Interface
 
-Blog post: [https://addpipe.com/blog/using-webaudiorecorder-js-to-record-audio-on-your-website/](https://addpipe.com/blog/using-webaudiorecorder-js-to-record-audio-on-your-website/)
-
-Demo: [https://addpipe.com/simple-web-audio-recorder-demo/](https://addpipe.com/simple-web-audio-recorder-demo/)
+This is a web audio interface with various elements. It allows users to record and visualize audio from a selected source. 
+The incoming sound can be modified with equalizer and filter knobs. Also the recording can be played back conveniently with 
+comprehensible controls provided by the used browser. A separate program (PlaySound.html) allows the playback of a user 
+selected file. It can easily be added to the main interface.
