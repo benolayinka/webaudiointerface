@@ -127,7 +127,7 @@ function Track(name, element) {
 	    'angleOffset':-125, 
 	    'angleArc':250,
 	    'displayInput':true,
-	    'cursor':true,
+	    'cursor':20,
 	    'skin':'tron',
 	    'change' : this.lowEQ.bind(this)
 	    	}
@@ -140,10 +140,10 @@ function Track(name, element) {
 		    'width':100,
 		    'height':100,
 		    'fgColor':'#0000FF',
-		    'angleOffset':-125, 
-		    'angleArc':250,
+		    'angleOffset':-125,
+		    'angleArc':250, 
 		    'displayInput':true,
-		    'cursor':true,
+		    'cursor':20,
 		    'skin':'tron',
 		    'change' : this.midEQ.bind(this)
 		    }
@@ -158,7 +158,7 @@ function Track(name, element) {
 		    'angleOffset':-125, 
 		    'angleArc':250,
 		    'displayInput':true,
-		    'cursor':true,
+		    'cursor':20,
 		    'skin':'tron',
 		    'change' : this.highEQ.bind(this)
 		    }
@@ -173,7 +173,7 @@ function Track(name, element) {
 		    'angleOffset':-125, 
 		    'angleArc':250,
 		    'displayInput':true,
-		    'cursor':true,
+		    'cursor':20,
 		    'skin':'tron',
 		    'change' : this.filterEQ.bind(this)
 		    }

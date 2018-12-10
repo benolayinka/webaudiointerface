@@ -39,6 +39,7 @@ function getMIDIMessage(message) {
 	var device = message.data[0];
     var button = message.data[1];
     var position = (message.data.length > 2) ? message.data[2] : 0; // a velocity value might not be included with a noteOff command
+    console.log(message)
     switch (button) {
         case 8: // noteOn
             $(".track1dialLow").val(position).trigger('change');
@@ -57,6 +58,12 @@ function getMIDIMessage(message) {
             break;
         case 14:
             $(".track2dialHigh").val(position).trigger('change');
+            break;
+        case 15:
+            $(".track1dialFilter").val(position).trigger('change');
+            break;
+        case 16:
+            $(".track2dialFilter").val(position).trigger('change');
             break;
         }
 }
