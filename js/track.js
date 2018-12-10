@@ -113,22 +113,16 @@ function Track(name, element) {
 	dialFilter.value = 0;
 	this.dialFilter = dialFilter;
 	
-	
 	e.appendChild(dialLow);
 	e.appendChild(dialMid);
 	e.appendChild(dialHigh);
 	e.appendChild(dialFilter);
 
-
-	//document.getElementById( "trackContainer" ).appendChild(e);
-	//this.trackElement = e;
-
-	navigator.mediaDevices.enumerateDevices().then(this.gotDevices.bind(this));
-
 	$("." + this.name + "dialLow").knob(
 		{'min':0,
 		 'max':127,
 	    'width':100,
+	    'height':100,
 	    'fgColor':'#00FF00',
 	    'angleOffset':-125, 
 	    'angleArc':250,
@@ -144,6 +138,7 @@ function Track(name, element) {
 		{'min':0,
 		 'max':127,
 		    'width':100,
+		    'height':100,
 		    'fgColor':'#0000FF',
 		    'angleOffset':-125, 
 		    'angleArc':250,
@@ -158,6 +153,7 @@ function Track(name, element) {
 		{'min':0,
 		 'max':127,
 		    'width':100,
+		    'height':100,
 		    'fgColor':'#FE2E2E',
 		    'angleOffset':-125, 
 		    'angleArc':250,
@@ -172,6 +168,7 @@ function Track(name, element) {
 		{'min':0,
 		 'max':127,
 		    'width':100,
+		    'height':100,
 		    'fgColor':'#000000',
 		    'angleOffset':-125, 
 		    'angleArc':250,
@@ -182,6 +179,7 @@ function Track(name, element) {
 		    }
 		    ).val(0).trigger('change');
 	
+	navigator.mediaDevices.enumerateDevices().then(this.gotDevices.bind(this));
 }
 
 Track.prototype.lowEQ = function(val) {
@@ -272,12 +270,14 @@ Track.prototype.setupAudioNodes = function() {
 	this.gainNode.gain.value = 0;
 
     this.analyserNode   = audioContext.createAnalyser();
+    this.analyserNode.fftSize = this.sampleSize;
+
     this.javascriptNode = audioContext.createScriptProcessor(this.sampleSize, 1, 1);
+
     // Create the array for the data values
     this.amplitudeArray = new Float32Array(this.analyserNode.frequencyBinCount);
     this.frequencyArray = new Uint8Array(this.analyserNode.frequencyBinCount);
     // Now connect the nodes together
-
     this.input.connect(this.low);
     this.low.connect(this.mid);
     this.mid.connect(this.high);

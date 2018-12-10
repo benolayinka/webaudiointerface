@@ -26,19 +26,18 @@
       </tr>
     <td colspan = "2">
 
-  	This is our DT2410 project to record audio, analyze the spectrum, and play it back. It uses HTML5 Web Audio javascript libraries and <a href="https://github.com/higuma/web-audio-recorder-js" target="_blank">WebAudioRecorder.js</a> to record audio and encode to common formats (pcm, Vorbis, mp3) directly in the browser.
+  	<h2>This is our DT2410 project to record audio, analyze the spectrum, and play it back. It uses <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API" target="_blank">Web Audio API</a> to manipulate EQ and filtering, <a href="https://github.com/higuma/web-audio-recorder-js" target="_blank">WebAudioRecorder.js</a> to record audio directly in the browser, and <a href="https://webaudio.github.io/web-midi-api/" target="_blank">Web MIDI API</a> to interface with a MIDI device.</h2>
+    <br>
+    <h3><a href="https://github.com/benolayinka/music-recognizer" target="_blank">FORK ME</a> on Github!</h3>
 	
-	<div id="controls">
-		<button id="recordButton">Record</button>
-		<button id="stopButton" disabled>Stop</button>
-	</div>
-	<div id="formats"></div>
-	<h3>Log</h3>
-	<pre id="log"></pre>
+    <div id="controls">
+    	<button id="recordButton">Record</button>
+    	<button id="stopButton" disabled>Stop</button>
+    </div>
 
-	<h3>Recordings</h3>
-	<ol id="recordingsList"></ol>
-</td>
+    	<h3>Recordings</h3>
+    	<ol id="recordingsList"></ol>
+    </td>
   </table>
 </div>
 
