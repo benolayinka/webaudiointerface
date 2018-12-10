@@ -322,8 +322,8 @@ Track.prototype.drawTimeDomain = function() {
 	for (var i = 0; i < this.amplitudeArray.length; i++) {
         var value = this.amplitudeArray[i]/2 + 0.5; //convert [-1 1] float to [0 to 1]
         var y = this.canvas.height - (this.canvas.height * value) - 1;
-        this.ctx.fillStyle = '#ffffff';
-        this.ctx.fillRect(i, y, 1, 1);
+        this.ctx.fillStyle = '#008000';
+        this.ctx.fillRect(i, y, 2, 2);
     }
 }
 
@@ -332,8 +332,8 @@ Track.prototype.drawFrequencyDomain = function() {
 	for (var i = 0; i < this.frequencyArray.length; i++) {
         var value = this.frequencyArray[i]/256; //convert [-1 1] float to [0 to 1]
         var y = this.canvas.height - (this.canvas.height * value) - 1;
-        this.ctx.fillStyle = '#ffffff';
-        this.ctx.fillRect(i, y, 1, 1);
+        this.ctx.fillStyle = '#008000';
+        this.ctx.fillRect(i, y, 2, 2);
     }
 }
 
